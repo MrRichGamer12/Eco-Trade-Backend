@@ -1,7 +1,7 @@
-import express from "express";
-import { connectToDatabase } from "./services/database.service"
-import { UserRouter } from "./router/routes.users";
-import { ProductRouter } from "./router/routes.products";
+const express = require ("express");
+const connectToDatabase = require("./services/database.service").connection
+const UserRouter = require("./router/routes.users");
+const ProductRouter = require ("./router/routes.products");
 
 const port = process.env.PORT || 8080
 const app = express()
@@ -16,7 +16,7 @@ connectToDatabase()
             console.log(`Server started at http://localhost:${port}`);
         });
     })
-    .catch((error: Error) => {
+    .catch((error) => {
         console.error("Database connection failed", error);
         process.exit();
     });

@@ -1,20 +1,22 @@
-// External Dependencies
-import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
-import { collections1 } from "../services/database.service";
-import Users from "../models/Users";
-// Global Config
-export const UserRouter = express.Router();
+const express = require('express')
+const ObjectId = require( "mongodb").ObjectId;
+const mongoDB = require ("mongodb");7
+const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12@eco-trade.zbhmzeu.mongodb.net/?retryWrites=true&w=majority");
 
-UserRouter.use(express.json());
+// Global Config
+const ProductRouter = express.Router();
+
+ProductRouter.use(express.json());
 // GET
-UserRouter.get("/:id", async (req: Request, res: Response) => {
+ProductRouter.get("/:id", async (req, res) => {
+    await client.connect();
+    let collections2 = client.db('Eco-Trade').collection('Products')
     const id = req?.params?.id;
 
     try {
         
         const query = { _id: new ObjectId(id) };
-        const user = (await collections1.User?.findOne(query)) as unknown as Users;
+        const user = await collections2.findOne(query);
 
         if (user) {
             res.status(200).send(user);
@@ -24,10 +26,12 @@ UserRouter.get("/:id", async (req: Request, res: Response) => {
     }
 });
 // POST
-UserRouter.post("/", async (req: Request, res: Response) => {
+ProductRouter.post("/", async (req, res) => {
+    await client.connect();
+    let collections2 = client.db('Eco-Trade').collection('Products')
     try {
-        const newUser = req.body as Users;
-        const result = await collections1.User?.insertOne(newUser);
+        const newUser = req.body;
+        const result = await collections2.insertOne(newUser);
 
         result
             ? res.status(201).send(`Successfully created a new user with id ${result.insertedId}`)
@@ -38,14 +42,16 @@ UserRouter.post("/", async (req: Request, res: Response) => {
     }
 });
 // PUT
-UserRouter.put("/:id", async (req: Request, res: Response) => {
+ProductRouter.put("/:id", async (req, res) => {
     const id = req.params.id;
+    await client.connect();
+    let collections2 = client.db('Eco-Trade').collection('Products')
 
     try {
-        const updatedUser: Users = req.body as Users;
+        const updatedProduct = req.body;
         const query = { _id: new ObjectId(id) };
       
-        const result = await collections1.User?.updateOne(query, { $set: updatedUser });
+        const result = await collections2.updateOne(query, { $set: updatedProduct });
 
         result
             ? res.status(200).send(`Successfully updated game with id ${id}`)
@@ -56,12 +62,14 @@ UserRouter.put("/:id", async (req: Request, res: Response) => {
     }
 });
 // DELETE
-UserRouter.delete("/:id", async (req: Request, res: Response) => {
+ProductRouter.delete("/:id", async (req, res) => {
     const id = req?.params?.id;
+    await client.connect();
+    let collections2 = client.db('Eco-Trade').collection('Products')
 
     try {
         const query = { _id: new ObjectId(id) };
-        const result = await collections1.User?.deleteOne(query);
+        const result = await collections2.deleteOne(query);
 
         if (result && result.deletedCount) {
             res.status(202).send(`Successfully removed user with id ${id}`);
@@ -75,3 +83,5 @@ UserRouter.delete("/:id", async (req: Request, res: Response) => {
         res.status(400).send("Caugth an problem");
     }
 });
+
+module.exports = ProductRouter
