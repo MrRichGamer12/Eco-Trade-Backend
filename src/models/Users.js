@@ -2,9 +2,10 @@
 import { ObjectId } from "mongodb";
 // Class Implementation
 export default class Users {
-    constructor(name, password) {
+    constructor(name, password,image) {
         this.name = name; 
-        this.password = password
+        this.password = password,
+        this.image= image,
         this._id = ObjectId(); 
     }
 }

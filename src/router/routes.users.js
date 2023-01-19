@@ -37,7 +37,6 @@ UserRouter.get("/:name&:password", async (req, res) => {
     }
 });
 UserRouter.get("/", async (req, res) => {
-    
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
 
@@ -51,57 +50,68 @@ UserRouter.get("/", async (req, res) => {
     }
 });
 // POST
-UserRouter.post("/", async (req, res) => {
+UserRouter.post("/:name&:password", async (req, res) => {
+    const name = req.params.name
+    const password = req.params.password
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
     try {
-        const newUser = req.body;
+        query = {name: name,password:password};
+        const user = await collections1.find(query).toArray();
+        if(user.length<1){
+        const newUser = req.params;
         const result = await collections1.insertOne(newUser);
-
         result
-            ? res.status(201).send(`Successfully created a new user with id ${result.insertedId}`)
-            : res.status(500).send("Failed to create a new user.");
+            res.status(201).send(`Successfully created a new user with id ${result.insertedId}`);
+    } 
+    else{
+         res.status(500).send("That user already exists.");
+    }
     } catch (error) {
         console.error(error);
         res.status(400).send("Caugth an problem");
     }
 });
 // PUT
-UserRouter.put("/:id", async (req, res) => {
+UserRouter.put("/:name&:password", async (req, res) => {
+    const name = req.params.name
+    const password = req.params.password
+    const image = req.params.image
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
-    const id = req.params.id;
 
     try {
-        const updatedUser = req.body;
-        const query = { _id: new ObjectId(id) };
+        const updatedUser = req.params;
+        const query = { name:name,password:password,image:image};
       
         const result = await collections1.updateOne(query, { $set: updatedUser });
 
         result
-            ? res.status(200).send(`Successfully updated game with id ${id}`)
-            : res.status(304).send(`Game with id: ${id} not updated`);
+            ? res.status(200).send(`Successfully updated user with name ${name}`)
+            : res.status(304).send(`User with name: ${name} not updated`);
     } catch (error) {
         console.error(error);
         res.status(400).send("Caugth an problem");
     }
 });
 // DELETE
-UserRouter.delete("/:id", async (req, res) => {
-    const id = req?.params?.id;
+UserRouter.delete("/:name&:password", async (req, res) => {
+    const name = req.params.name
+    const password = req.params.password
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
 
     try {
-        const query = { _id: new ObjectId(id) };
-        const result = await collections1.deleteOne(query);
+        const query = {name: name,password:password};
+        const user = await collections1.find(query).toArray();
+        const result = await collections1.deleteOne(user);
 
         if (result && result.deletedCount) {
-            res.status(202).send(`Successfully removed user with id ${id}`);
+            res.status(202).send(`Successfully removed user ${name}`);
         } else if (!result) {
-            res.status(400).send(`Failed to remove user with id ${id}`);
+            res.status(400).send(`Failed to remove user ${name}`);
         } else if (!result.deletedCount) {
-            res.status(404).send(`user with id ${id} does not exist`);
+            res.status(404).send(`User ${name} does not exist`);
         }
     } catch (error) {
         console.error(error);
