@@ -2,7 +2,11 @@ import express from "express";
 import { connectToDatabase } from "./services/database.service"
 import { UserRouter } from "./router/routes.users";
 import { ProductRouter } from "./router/routes.products";
-const port =8080
+
+const port = process.env.PORT || 8080
+const app = express()
+app.use(express.urlencoded({extended:false}))
+app.use(express.json())
 connectToDatabase()
     .then(() => {
         app.use("/user", UserRouter);
@@ -17,6 +21,3 @@ connectToDatabase()
         process.exit();
     });
     
-const app = express()
-app.use(express.urlencoded({extended:false}))
-app.use(express.json())
