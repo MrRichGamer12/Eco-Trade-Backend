@@ -1,7 +1,7 @@
 const express = require ("express");
-const connectToDatabase = require("./services/database.service").connection
-const UserRouter = require("./router/routes.users");
-const ProductRouter = require ("./router/routes.products");
+const connectToDatabase = require("./src/services/database.service").connection
+const UserRouter = require("./src/router/routes.users");
+const ProductRouter = require ("./src/router/routes.products");
 
 const port = process.env.PORT || 8080
 const app = express()
