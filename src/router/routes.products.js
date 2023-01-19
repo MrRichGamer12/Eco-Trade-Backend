@@ -5,8 +5,6 @@ const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12
 
 // Global Config
 const ProductRouter = express.Router();
-
-ProductRouter.use(express.json());
 // GET
 ProductRouter.get("/:id", async (req, res) => {
     await client.connect();

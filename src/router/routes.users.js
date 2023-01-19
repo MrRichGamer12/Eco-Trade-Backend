@@ -1,28 +1,53 @@
 // External Dependencies
+require("dotenv").config()
+const jtw = require("jsonwebtoken");
 const express = require("express");
 const ObjectId = require("mongodb").ObjectId;
 const mongoDB = require ("mongodb");
 const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12@eco-trade.zbhmzeu.mongodb.net/?retryWrites=true&w=majority");
 // Global Config
 const UserRouter = express.Router();
-
-UserRouter.use(express.json());
 // GET
-UserRouter.get("/:id", async (req, res) => {
-    const id = req?.params?.id;
+UserRouter.get("/:name&:password", async (req, res) => {
+    const name = req.params.name
+    const password = req.params.password
+    console.log(req.params);
+    console.log(name);
+    console.log(password);
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
 
     try {
+        query = {name: name,password:password};
+        const user = await collections1.find(query).toArray();
+        console.log(user);
         
-        const query = { _id: new ObjectId(id) };
-        const user = await collections1.findOne(query);
+        if (user) {
+            res.status(200).send(user);
 
+        const accessTokenN=jtw.sign(name,process.env.ACCESS_TOKEN_SECRET)
+        const accessTokenPW= jtw.sign(password,process.env.ACCESS_TOKEN_SECRET)
+        res.json({accessTokenN:accessTokenN,accessTokenPW:accessTokenPW})
+    }
+        else{
+            res.status(401).send("Fail to find user");
+        }
+    } catch (error) {
+        res.status(404).send(`Unable to find matching document with name: ${req.params.name}`);
+    }
+});
+UserRouter.get("/", async (req, res) => {
+    
+    await client.connect();
+    let collections1 = client.db('Eco-Trade').collection('Users')
+
+    try {
+        const user = await collections1.find({}).toArray();
         if (user) {
             res.status(200).send(user);
         }
     } catch (error) {
-        res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
+        res.status(404).send(`Unable to find users`);
     }
 });
 // POST
