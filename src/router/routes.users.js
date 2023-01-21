@@ -51,7 +51,7 @@ UserRouter.get("/", async (req, res) => {
     }
 });
 // POST
-UserRouter.post("/:name/:password", async (req, res) => {
+UserRouter.post("/?name=value/password=value", async (req, res) => {
     const name = req.params.name
     const password = req.params.password
     await client.connect();
