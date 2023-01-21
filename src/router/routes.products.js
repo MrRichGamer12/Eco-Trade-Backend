@@ -6,18 +6,14 @@ const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12
 // Global Config
 const ProductRouter = express.Router();
 // GET
-ProductRouter.get("/:id", async (req, res) => {
+ProductRouter.get("/", async (req, res) => {
     await client.connect();
     let collections2 = client.db('Eco-Trade').collection('Products')
-    const id = req?.params?.id;
 
     try {
-        
-        const query = { _id: new ObjectId(id) };
-        const user = await collections2.findOne(query);
-
-        if (user) {
-            res.status(200).send(user);
+        const product = collections2.find();
+        if (product) {
+            res.status(200).send(product);
         }
     } catch (error) {
         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
@@ -34,26 +30,6 @@ ProductRouter.post("/", async (req, res) => {
         result
             ? res.status(201).send(`Successfully created a new user with id ${result.insertedId}`)
             : res.status(500).send("Failed to create a new user.");
-    } catch (error) {
-        console.error(error);
-        res.status(400).send("Caugth an problem");
-    }
-});
-// PUT
-ProductRouter.put("/:id", async (req, res) => {
-    const id = req.params.id;
-    await client.connect();
-    let collections2 = client.db('Eco-Trade').collection('Products')
-
-    try {
-        const updatedProduct = req.body;
-        const query = { _id: new ObjectId(id) };
-      
-        const result = await collections2.updateOne(query, { $set: updatedProduct });
-
-        result
-            ? res.status(200).send(`Successfully updated game with id ${id}`)
-            : res.status(304).send(`Game with id: ${id} not updated`);
     } catch (error) {
         console.error(error);
         res.status(400).send("Caugth an problem");

@@ -1,6 +1,6 @@
 // External Dependencies
-require("dotenv").config()
-const jtw = require("jsonwebtoken");
+const env= require("dotenv").config()
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const ObjectId = require("mongodb").ObjectId;
 const mongoDB = require ("mongodb");
@@ -9,25 +9,22 @@ const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12
 const UserRouter = express.Router();
 // GET
 UserRouter.get("/:name&:password", async (req, res) => {
-    const name = req.params.name
-    const password = req.params.password
-    console.log(req.params);
-    console.log(name);
-    console.log(password);
+    const name=req.params.name
+    const password=req.params.password
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
-
-    try {
+     try {
         query = {name: name,password:password};
         const user = await collections1.find(query).toArray();
         console.log(user);
-        
+        console.log(process.env.ACCESS_TOKEN_SECRET);
+        console.log(user[0]._id);
         if (user) {
-            res.status(200).send(user);
-
-        const accessTokenN=jtw.sign(name,process.env.ACCESS_TOKEN_SECRET)
-        const accessTokenPW= jtw.sign(password,process.env.ACCESS_TOKEN_SECRET)
-        res.json({accessTokenN:accessTokenN,accessTokenPW:accessTokenPW})
+            const accessToken = jwt.sign({ userId: user[0]._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
+            console.log(accessToken);
+            storeToken(accessToken);
+            return res.status(200).send(accessToken);
+            
     }
         else{
             res.status(401).send("Fail to find user");
@@ -87,7 +84,7 @@ UserRouter.put("/:name&:password", async (req, res) => {
         const result = await collections1.updateOne(query, { $set: updatedUser });
 
         result
-            ? res.status(200).send(`Successfully updated user with name ${name}`)
+            ? res.status(200).send(`Successfully updated user with name: ${name}`)
             : res.status(304).send(`User with name: ${name} not updated`);
     } catch (error) {
         console.error(error);
