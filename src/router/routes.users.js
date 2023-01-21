@@ -8,7 +8,7 @@ const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12
 // Global Config
 const UserRouter = express.Router();
 // GET
-UserRouter.get("/:name&:password", async (req, res) => {
+UserRouter.get("/:name/:password", async (req, res) => {
     const name=req.params.name
     const password=req.params.password
     await client.connect();
@@ -51,7 +51,7 @@ UserRouter.get("/", async (req, res) => {
     }
 });
 // POST
-UserRouter.post("/:name&:password", async (req, res) => {
+UserRouter.post("/:name/:password", async (req, res) => {
     const name = req.params.name
     const password = req.params.password
     await client.connect();
@@ -74,7 +74,7 @@ UserRouter.post("/:name&:password", async (req, res) => {
     }
 });
 // PUT
-UserRouter.put("/:name&:password", async (req, res) => {
+UserRouter.put("/:name/:password", async (req, res) => {
     const name = req.params.name
     const password = req.params.password
     await client.connect();
