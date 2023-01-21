@@ -1,4 +1,6 @@
-const express = require('express')
+const jwt = require("jsonwebtoken");
+const env= require("dotenv").config();
+const express = require('express');
 const ObjectId = require( "mongodb").ObjectId;
 const mongoDB = require ("mongodb");7
 const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12@eco-trade.zbhmzeu.mongodb.net/?retryWrites=true&w=majority");
@@ -11,6 +13,9 @@ ProductRouter.get("/", async (req, res) => {
     let collections2 = client.db('Eco-Trade').collection('Products')
 
     try {
+        const token = req.headers.authorization;
+        const secretKey = process.env.ACCESS_TOKEN_SECRET;
+        jwt.verify(token, secretKey, {algorithms: ['HS256']});
         const product = collections2.find();
         if (product) {
             res.status(200).send(product);

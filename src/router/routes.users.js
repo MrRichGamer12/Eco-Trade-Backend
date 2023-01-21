@@ -1,5 +1,5 @@
 // External Dependencies
-const env= require("dotenv").config()
+const env= require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const ObjectId = require("mongodb").ObjectId;
@@ -23,7 +23,7 @@ UserRouter.get("/:name&:password", async (req, res) => {
             const accessToken = jwt.sign({ userId: user[0]._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
             console.log(accessToken);
             storeToken(accessToken);
-            return res.status(200).send(accessToken);
+            return res.status(200).send(user);
             
     }
         else{
