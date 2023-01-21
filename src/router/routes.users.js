@@ -11,6 +11,8 @@ const UserRouter = express.Router();
 UserRouter.get("/:name/:password", async (req, res) => {
     const name=req.params.name
     const password=req.params.password
+    console.log(name);
+    console.log(password);
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
      try {
