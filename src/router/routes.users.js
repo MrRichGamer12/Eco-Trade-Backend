@@ -23,7 +23,7 @@ UserRouter.get("/:name&:password", async (req, res) => {
             const accessToken = jwt.sign({ userId: user[0]._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
             console.log(accessToken);
             const responseData = {
-                user: user[0],
+                user: user,
                 token: accessToken
             }
             console.log(responseData);
