@@ -22,11 +22,11 @@ UserRouter.get("/:name&:password", async (req, res) => {
         if (user) {
             const accessToken = jwt.sign({ userId: user[0]._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
             console.log(accessToken);
-            storeToken(accessToken);
             const responseData = {
-                user: user,
+                user: user[0],
                 token: accessToken
             }
+            console.log(responseData);
             return res.status(200).json(responseData);
             
     }
