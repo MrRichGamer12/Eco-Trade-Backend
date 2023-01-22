@@ -19,10 +19,9 @@ UserRouter.get("/:name/:password", async (req, res) => {
         query = {name: name,password:password};
         const user = await collections1.find(query).toArray();
         console.log(user);
-        console.log(process.env.ACCESS_TOKEN_SECRET);
         console.log(user[0]._id);
         if (user[0]) {
-            const accessToken = jwt.sign({ userId: user[0]._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
+            const accessToken = jwt.sign({ userId: user[0]._id }, 'b1cebf58ce03b245a33a8a670c6aeff5c46d75349b4593b2e4bf19ec4ac6c4e3aec00d3aea86f12804a654c66f5dc3a07ca14b237430597ffb272347bfdae2f7', { expiresIn: '24h' });
             console.log(accessToken);
             const responseData = {
                 user: user,
