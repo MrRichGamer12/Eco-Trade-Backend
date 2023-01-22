@@ -30,9 +30,9 @@ ChatRouter.get("/", async (req, res) => {
         const token = req.headers.authorization;
         const secretKey = "b1cebf58ce03b245a33a8a670c6aeff5c46d75349b4593b2e4bf19ec4ac6c4e3aec00d3aea86f12804a654c66f5dc3a07ca14b237430597ffb272347bfdae2f7";
         jwt.verify(token, secretKey, {algorithms: ['HS256']});
-        const product = await collections3.find({}).toArray();
+        const product = await collections3.find().toArray();
         if (product) {
-            res.status(200).send(product);
+            res.status(200).json(product);
         }
     } catch (error) {
         res.status(404).send("Unable to find any documents in the collection");

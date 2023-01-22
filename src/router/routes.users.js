@@ -76,16 +76,18 @@ UserRouter.post("/:name/:password", async (req, res) => {
     }
 });
 // PUT
-UserRouter.put("/:name/:password", async (req, res) => {
-    const name = req.params.name
-    const password = req.params.password
+UserRouter.put("/:id", async (req, res) => {
+    const name = req.body.name
+    const password = req.body.password
+    const image= req.body.image
+    const id=req.params.id
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
 
 
     try {
         const updatedUser = {name,password,image};
-        const query = {name:name,password:password};
+        const query = {id};
       
         const result = await collections1.updateOne(query, { $set: updatedUser });
 
@@ -98,20 +100,19 @@ UserRouter.put("/:name/:password", async (req, res) => {
     }
 });
 // DELETE
-UserRouter.delete("/:name/:password", async (req, res) => {
-    const id = req?.params?.id;
+UserRouter.delete("/:id", async (req, res) => {
+    const id=req.params.id
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = {_id: ObjectId(id)};
         const result = await collections1.deleteOne(query);
+        console.log(result);
 
-        if (result && result.deletedCount) {
+        if (result.deletedCount) {
             res.status(202).send(`Successfully removed user with id ${id}`);
-        } else if (!result) {
-            res.status(400).send(`Failed to remove user with id ${id}`);
-        } else if (!result.deletedCount) {
+        } else {
             res.status(404).send(`user with id ${id} does not exist`);
         }
     } catch (error) {
@@ -119,5 +120,6 @@ UserRouter.delete("/:name/:password", async (req, res) => {
         res.status(400).send("Caugth an problem");
     }
 });
+
 
 module.exports = UserRouter
