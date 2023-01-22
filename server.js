@@ -2,6 +2,7 @@ const express = require ("express");
 const connectToDatabase = require("./src/services/database.service").connection
 const UserRouter = require("./src/router/routes.users");
 const ProductRouter = require ("./src/router/routes.products");
+const ChatRouter = require("./src/router/routes_chat")
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
@@ -12,6 +13,7 @@ app.use(express.json())
 app.use(bodyParser.json());
 app.use("/users", UserRouter);
 app.use("/products", ProductRouter);
+app.use("/chat", ChatRouter);
 connectToDatabase()
     .then(() => {
         app.listen(port, () => {

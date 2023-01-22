@@ -52,19 +52,20 @@ UserRouter.get("/", async (req, res) => {
     }
 });
 // POST
-UserRouter.post("/?name=value/password=value", async (req, res) => {
-    const name = req.params.name
-    const password = req.params.password
+UserRouter.post("/:name/:password", async (req, res) => {
+    const name = req.params.name;
+    const password = req.params.password;
+    const image="";
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')
     try {
         query = {name: name,password:password};
         const user = await collections1.find(query).toArray();
         if(user.length<1){
-        const newUser = req.params;
-        const result = await collections1.insertOne(newUser);
-        result
-            res.status(201).send(`Successfully created a new user with id ${result.insertedId}`);
+        const newUser = {name,password,image};
+        console.log(newUser);
+        const result1 = await collections1.insertOne(newUser);
+        res.status(201).json(result1);
     } 
     else{
          res.status(500).send("That user already exists.");
@@ -83,7 +84,7 @@ UserRouter.put("/:name/:password", async (req, res) => {
 
 
     try {
-        const updatedUser = req.params;
+        const updatedUser = {name,password,image};
         const query = {name:name,password:password};
       
         const result = await collections1.updateOne(query, { $set: updatedUser });
@@ -97,7 +98,7 @@ UserRouter.put("/:name/:password", async (req, res) => {
     }
 });
 // DELETE
-UserRouter.delete("/:name&:password", async (req, res) => {
+UserRouter.delete("/:name/:password", async (req, res) => {
     const id = req?.params?.id;
     await client.connect();
     let collections1 = client.db('Eco-Trade').collection('Users')

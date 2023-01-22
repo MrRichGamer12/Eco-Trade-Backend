@@ -1,8 +1,7 @@
 const jwt = require("jsonwebtoken");
-const env= require("dotenv").config();
-const express = require('express');
+const express = require('express')
 const ObjectId = require( "mongodb").ObjectId;
-const mongoDB = require ("mongodb");7
+const mongoDB = require ("mongodb");
 const client = new mongoDB.MongoClient("mongodb+srv://MrRichGamer:MrRichGamer.12@eco-trade.zbhmzeu.mongodb.net/?retryWrites=true&w=majority");
 
 // Global Config
@@ -14,53 +13,38 @@ ProductRouter.get("/", async (req, res) => {
 
     try {
         const token = req.headers.authorization;
-        const secretKey = process.env.ACCESS_TOKEN_SECRET;
+        const secretKey = "b1cebf58ce03b245a33a8a670c6aeff5c46d75349b4593b2e4bf19ec4ac6c4e3aec00d3aea86f12804a654c66f5dc3a07ca14b237430597ffb272347bfdae2f7";
         jwt.verify(token, secretKey, {algorithms: ['HS256']});
-        const product = collections2.find();
+        const product = await collections2.find({}).toArray();
         if (product) {
             res.status(200).send(product);
         }
     } catch (error) {
-        res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
+        res.status(404).send("Unable to find any documents in the collection");
     }
 });
+
 // POST
 ProductRouter.post("/", async (req, res) => {
     await client.connect();
     let collections2 = client.db('Eco-Trade').collection('Products')
+    const token = req.headers.authorization;
+  const secretKey = "b1cebf58ce03b245a33a8a670c6aeff5c46d75349b4593b2e4bf19ec4ac6c4e3aec00d3aea86f12804a654c66f5dc3a07ca14b237430597ffb272347bfdae2f7";
+  const decoded = jwt.verify(token, secretKey); 
+  const userId = decoded.userId;
     try {
-        const newUser = req.body;
-        const result = await collections2.insertOne(newUser);
+        const product = req.body;
+        console.log(product);
+        product.userId = userId;
+
+        const result = await collections2.insertOne(product);
 
         result
-            ? res.status(201).send(`Successfully created a new user with id ${result.insertedId}`)
-            : res.status(500).send("Failed to create a new user.");
+            ? res.status(201).send(`Successfully created a new product with id ${result.insertedId}`)
+            : res.status(500).send("Failed to create a new product.");
     } catch (error) {
         console.error(error);
         res.status(400).send("Caugth an problem");
     }
 });
-// DELETE
-ProductRouter.delete("/:id", async (req, res) => {
-    const id = req?.params?.id;
-    await client.connect();
-    let collections2 = client.db('Eco-Trade').collection('Products')
-
-    try {
-        const query = { _id: new ObjectId(id) };
-        const result = await collections2.deleteOne(query);
-
-        if (result && result.deletedCount) {
-            res.status(202).send(`Successfully removed user with id ${id}`);
-        } else if (!result) {
-            res.status(400).send(`Failed to remove user with id ${id}`);
-        } else if (!result.deletedCount) {
-            res.status(404).send(`user with id ${id} does not exist`);
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(400).send("Caugth an problem");
-    }
-});
-
 module.exports = ProductRouter

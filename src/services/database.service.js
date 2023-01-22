@@ -9,9 +9,12 @@ const connection = async () => {
  
   const usersCollection = db.collection("Users");
   const productsCollection = db.collection("Products");
+  const chatCollection = db.collection("Chat");
       
   console.log(`Successfully connected to database: ${db.databaseName} and collection: ${usersCollection.collectionName}`);
   console.log(`Successfully connected to database: ${db.databaseName} and collection: ${productsCollection.collectionName}`);
+  console.log(`Successfully connected to database: ${db.databaseName} and collection: ${chatCollection.collectionName}`);
+
 }
 exports.connection = connection;
 
